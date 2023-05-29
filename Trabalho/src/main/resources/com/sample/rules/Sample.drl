@@ -1,0 +1,50 @@
+package com.sample.rules;
+
+import com.sample.DroolsTest.Message;
+import com.sample.Divisao;
+import com.sample.AlarmeTotal;
+import com.sample.AlarmeParcial;
+import com.sample.DetecaoIntruso;
+
+rule "Ligar alarme parcial em todas as divisões possiveis"
+    salience 25
+when
+    $d: Divisao()
+    not AlarmeParcial(divisao == $d, $ligado: ligado)
+    not AlarmeTotal(divisao == $d, ligado == true)
+then
+    AlarmeParcial ap = new AlarmeParcial($d, true);
+    insert(ap);
+    System.out.println("Alarme Parcial ligado na divisão: " + $d.getNome());
+end
+
+
+rule "Ligar Alarme Total em todas as divisões"
+    salience 20
+    when
+        $d : Divisao()
+        not AlarmeTotal(divisao == $d, ligado == true)
+    then
+        AlarmeTotal at = new AlarmeTotal($d, true);
+        insert(at);
+        System.out.println("Alarme Total ligado em todas as divisões");
+end
+
+rule "Disparar Alarme para Intruso Humano"
+when
+    $detecao: DetecaoIntruso(ativacaoSensorMovimento == true, ativacaoSensorAcesso == true)
+    // Condições que caracterizam um intruso humano
+    // Adicione aqui as condições específicas para detectar um intruso humano
+    // Por exemplo:
+    // $detecao.getAtivacaoSensorMovimento() == true && $detecao.getAtivacaoSensorAcesso() == true
+then
+    // Executar ações para disparar o alarme
+    // Por exemplo, chamar um método para acionar o alarme
+    Divisao divisao = new Divisao("Sala"); // Substitua "Sala" pelo nome da divisão correta
+    AlarmeTotal alarmeTotal = new AlarmeTotal(divisao, true);
+    alarmeTotal.disparar(); // Método que dispara o alarme total
+    AlarmeParcial alarmeParcial = new AlarmeParcial(divisao, true);
+    alarmeParcial.disparar(); // Método que dispara o alarme parcial
+
+    System.out.println("Alarme disparado por intruso humano");
+end
