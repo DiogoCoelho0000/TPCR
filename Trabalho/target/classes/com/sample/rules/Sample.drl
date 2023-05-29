@@ -5,22 +5,22 @@ import com.sample.Divisao;
 import com.sample.AlarmeTotal;
 import com.sample.AlarmeParcial;
 import com.sample.DetecaoIntruso;
+import com.sample.TipoIntruso;
 
-rule "Ligar alarme parcial em todas as divisões possiveis"
-    salience 25
+rule "Ligar alarme parcial em todas as divisões possíveis"
+    salience 30
 when
     $d: Divisao()
-    not AlarmeParcial(divisao == $d, $ligado: ligado)
+    not AlarmeParcial(divisao == $d, ligado == true)
     not AlarmeTotal(divisao == $d, ligado == true)
 then
-    AlarmeParcial ap = new AlarmeParcial($d, true);
+    AlarmeParcial ap = new AlarmeParcial($d, true, false);
     insert(ap);
     System.out.println("Alarme Parcial ligado na divisão: " + $d.getNome());
 end
 
-
 rule "Ligar Alarme Total em todas as divisões"
-    salience 20
+    salience 30
     when
         $d : Divisao()
         not AlarmeTotal(divisao == $d, ligado == true)
@@ -30,7 +30,19 @@ rule "Ligar Alarme Total em todas as divisões"
         System.out.println("Alarme Total ligado em todas as divisões");
 end
 
-rule "Disparar Alarme para Intruso Humano"
+rule "Desligar Alarme Parcial quando Alarme Total é ligado"
+    salience 25
+    when
+        $at : AlarmeTotal(ligado == true)
+        $ap : AlarmeParcial(ligado == true)
+    then
+        modify($ap) {
+            setLigado(false);
+        }
+        System.out.println("Alarme Parcial desligado devido ao Alarme Total");
+end
+
+/* rule "Disparar Alarme para Intruso Humano"
 when
     $detecao: DetecaoIntruso(ativacaoSensorMovimento == true, ativacaoSensorAcesso == true)
     // Condições que caracterizam um intruso humano
@@ -42,9 +54,9 @@ then
     // Por exemplo, chamar um método para acionar o alarme
     Divisao divisao = new Divisao("Sala"); // Substitua "Sala" pelo nome da divisão correta
     AlarmeTotal alarmeTotal = new AlarmeTotal(divisao, true);
-    alarmeTotal.disparar(); // Método que dispara o alarme total
+     alarmeTotal.disparar(); // Método que dispara o alarme total
     AlarmeParcial alarmeParcial = new AlarmeParcial(divisao, true);
     alarmeParcial.disparar(); // Método que dispara o alarme parcial
 
     System.out.println("Alarme disparado por intruso humano");
-end
+end */

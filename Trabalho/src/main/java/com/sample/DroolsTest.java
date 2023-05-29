@@ -37,11 +37,11 @@ public class DroolsTest {
            	kSession.insert( at3 );
            	kSession.insert( at4 );
            	kSession.insert( at5 );
-           	AlarmeParcial ap1 = new AlarmeParcial(d4 , false); // Quarto nao tem alarme parcial
-           	AlarmeParcial ap2 = new AlarmeParcial(d5 , false);	// Garagem nao tem alarme parcial
+           	AlarmeParcial ap1 = new AlarmeParcial(d4 , false, false); // Quarto nao tem alarme parcial
+           	AlarmeParcial ap2 = new AlarmeParcial(d5 , false, false);	// Garagem nao tem alarme parcial
            	kSession.insert( ap1 );
            	kSession.insert( ap2 );
-           	DetecaoIntruso detecao = new DetecaoIntruso(true, true); // Exemplo de detecção de intruso
+           	DetecaoIntruso detecao = new DetecaoIntruso(true, true, null); // Exemplo de detecção de intruso
            	kSession.insert(detecao);
            	
             kSession.fireAllRules();
